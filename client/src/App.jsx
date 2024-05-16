@@ -1,34 +1,54 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import { useState, useEffect } from 'react'
 import './App.css'
 
 function App() {
-  const [count, setCount] = useState(0)
+  
+  const[state,setState]=useState({
+    provider:null,
+    signer:null,
+    contract:null
+  })
+
+  const[account,setAccount]=useState('Not Connected');
+
+  useEffect(()=>{
+    const template=async()=>{
+      const contractAddress="";
+      const contractABI="";
+      //Metamask part
+      //1.Inorder to do transactions on goreli testnet
+      //2.Metamsk consists of Infura api which actually help in connecting to the blockchain
+
+      try{
+        const {ethereum}=window;
+
+        const account=await ethereum.request({
+          method:"eth_requestAccounts"
+          //used to  pop-up metamask
+        })
+          const provider=new ethers.providers.Web3Provider(ethereum);//provider reads from blockchain
+          const signer=provider.getSigner();//write to blockchain
+
+          const contract = new ethers.Contract(
+          contractAddress, //contract address identifies where your contract has been deployed
+          contractABI, //used to talk to smart contract
+          signer //used to do transactions in smart contract
+        ) //creating an instance
+
+      setState(provider,signer,contract);
+      }catch(error){
+        alert(error)
+      }
+     
+
+
+      
+    }
+    template();
+  },[])
 
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+  <div className="App"></div>
   )
 }
 
